@@ -216,6 +216,28 @@ function updateProgress(index) {
 }
 
 // ── Scoring (même logique que orientation-scoring.js, adaptée navigateur) ──
+// ── Porte d'entrée IA par profil (copie de orientation-scoring.js) ──
+const AI_PATHS = {
+  "Analyste / Data": { porte: "Données", metiers: ["Annotateur·rice de données", "Data analyst"] },
+  "Expert(e) technique / Résolution de problèmes concrets": { porte: "Automatisation", metiers: ["Intégrateur·rice no-code IA", "Technicien·ne IA"] },
+  "Stratège / Analyste business": { porte: "Transformation", metiers: ["Consultant·e IA pour TPE/PME", "Chef·fe de projet IA"] },
+  "Gestion de projet": { porte: "Pilotage", metiers: ["Chef·fe de projet IA", "Product owner IA"] },
+  "Créateur(trice) de contenu / Stratégie de marque": { porte: "Création augmentée", metiers: ["Créateur·rice de contenu IA", "Prompt designer"] },
+  "Marketeur / Growth": { porte: "Marketing IA", metiers: ["Growth marketer IA", "Analyste performance"] },
+  "Community Manager": { porte: "Modération", metiers: ["Community manager augmenté·e", "Modérateur·rice de contenus IA"] },
+  "Designer / Production créative structurée": { porte: "Design génératif", metiers: ["Designer IA (visuels, vidéo)", "Directeur·rice artistique augmenté·e"] },
+  "Commercial(e) / Vente": { porte: "Vente de solutions", metiers: ["Commercial·e solutions IA", "Customer success IA"] },
+  "Formateur(trice) / Coordination pédagogique": { porte: "Transmission", metiers: ["Formateur·rice IA", "Référent·e IA en organisation"] },
+  "Formateur(trice) terrain / Accompagnement pratique": { porte: "Médiation", metiers: ["Médiateur·rice numérique IA", "Formateur·rice IA terrain"] },
+  "Consultant(e) / Expert(e)-conseil": { porte: "Conseil", metiers: ["Consultant·e éthique et conformité IA", "Consultant·e IA"] },
+  "Opérations / Logistique-Qualité": { porte: "Qualité des données", metiers: ["Contrôleur·se qualité IA", "Opérateur·rice data"] },
+  "Artisan(e)-créateur(rice) / Maker": { porte: "Objets connectés", metiers: ["Maker IA & IoT", "Artisan·e e-commerce augmenté·e"] },
+  "Entrepreneur(e) généraliste": { porte: "Business IA", metiers: ["Fondateur·rice de micro-agence IA", "Revendeur·se de services IA"] }
+};
+const AI_PATH_DEFAULT = { porte: "Usages IA", metiers: ["Professionnel·le augmenté·e par l'IA", "Formateur·rice IA"] };
+
+function getAiPath(profile) { return AI_PATHS[profile] || AI_PATH_DEFAULT; }
+
 function computeProfile() {
   const riasec = { R:0, I:0, A:0, S:0, E:0, C:0 };
   const bigfive = { extraversion:0, conscience:0, ouverture:0, agreabilite:0, stabilite:0 };
@@ -265,6 +287,7 @@ function computeProfile() {
 
 function renderResult() {
   const r = computeProfile();
+  const ai = getAiPath(r.profile);
   document.getElementById("app").innerHTML = `
     <div class="intro">
       <div class="result-badge">Ton profil</div>
@@ -278,6 +301,16 @@ function renderResult() {
         Basé sur le modèle RIASEC (Holland) et les 5 grands traits de personnalité.
         Ce résultat t'oriente, il ne t'enferme pas — tu peux évoluer.
       </p>
+
+      <div style="background:var(--card);border:1px solid rgba(167,139,250,.35);border-radius:14px;padding:20px;margin-bottom:18px;text-align:left;">
+        <div style="font-size:12px;font-weight:800;letter-spacing:.06em;color:#A78BFA;margin-bottom:6px;">🤖 TA PORTE D'ENTRÉE DANS L'IA : ${ai.porte.toUpperCase()}</div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:10px;">Avec ton profil, deux métiers de l'intelligence artificielle sont à ta portée :</p>
+        <ul style="margin:0 0 14px 18px;font-size:15px;line-height:1.7;">
+          <li>${ai.metiers[0]}</li>
+          <li>${ai.metiers[1]}</li>
+        </ul>
+        <a href="https://app.waneyo-formation.com/reader.html?module=53" style="color:#A78BFA;font-weight:700;font-size:14px;text-decoration:none;">Découvrir l'IA sans jargon (module offert) →</a>
+      </div>
 
       <div style="background:var(--card);border:1px solid rgba(124,58,237,.35);border-radius:14px;padding:24px 20px;margin-bottom:18px;text-align:center;">
         <div style="font-size:17px;font-weight:800;margin-bottom:6px;">Ton potentiel est là. Il ne demande qu'à être outillé.</div>
