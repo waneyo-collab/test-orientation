@@ -29,6 +29,31 @@ const PROFILE_MAP = {
   "A,C": "Designer / Production créative structurée"
 };
 
+// Porte d'entrée vers les métiers de l'IA pour chaque profil (n'influence pas le scoring).
+// À garder identique à la copie dans orientation.html et dans le dépôt test-orientation.
+const AI_PATHS = {
+  "Analyste / Data": { porte: "Données", metiers: ["Annotateur·rice de données", "Data analyst"] },
+  "Expert(e) technique / Résolution de problèmes concrets": { porte: "Automatisation", metiers: ["Intégrateur·rice no-code IA", "Technicien·ne IA"] },
+  "Stratège / Analyste business": { porte: "Transformation", metiers: ["Consultant·e IA pour TPE/PME", "Chef·fe de projet IA"] },
+  "Gestion de projet": { porte: "Pilotage", metiers: ["Chef·fe de projet IA", "Product owner IA"] },
+  "Créateur(trice) de contenu / Stratégie de marque": { porte: "Création augmentée", metiers: ["Créateur·rice de contenu IA", "Prompt designer"] },
+  "Marketeur / Growth": { porte: "Marketing IA", metiers: ["Growth marketer IA", "Analyste performance"] },
+  "Community Manager": { porte: "Modération", metiers: ["Community manager augmenté·e", "Modérateur·rice de contenus IA"] },
+  "Designer / Production créative structurée": { porte: "Design génératif", metiers: ["Designer IA (visuels, vidéo)", "Directeur·rice artistique augmenté·e"] },
+  "Commercial(e) / Vente": { porte: "Vente de solutions", metiers: ["Commercial·e solutions IA", "Customer success IA"] },
+  "Formateur(trice) / Coordination pédagogique": { porte: "Transmission", metiers: ["Formateur·rice IA", "Référent·e IA en organisation"] },
+  "Formateur(trice) terrain / Accompagnement pratique": { porte: "Médiation", metiers: ["Médiateur·rice numérique IA", "Formateur·rice IA terrain"] },
+  "Consultant(e) / Expert(e)-conseil": { porte: "Conseil", metiers: ["Consultant·e éthique et conformité IA", "Consultant·e IA"] },
+  "Opérations / Logistique-Qualité": { porte: "Qualité des données", metiers: ["Contrôleur·se qualité IA", "Opérateur·rice data"] },
+  "Artisan(e)-créateur(rice) / Maker": { porte: "Objets connectés", metiers: ["Maker IA & IoT", "Artisan·e e-commerce augmenté·e"] },
+  "Entrepreneur(e) généraliste": { porte: "Business IA", metiers: ["Fondateur·rice de micro-agence IA", "Revendeur·se de services IA"] }
+};
+const AI_PATH_DEFAULT = { porte: "Usages IA", metiers: ["Professionnel·le augmenté·e par l'IA", "Formateur·rice IA"] };
+
+function getAiPath(profile) {
+  return AI_PATHS[profile] || AI_PATH_DEFAULT;
+}
+
 /**
  * Calcule les scores bruts RIASEC et Big Five à partir des réponses.
  * @param {Object} answers - { questionId: optionId }
@@ -104,8 +129,9 @@ function computeProfile(answers, quiz) {
     bigfiveScores: bigfive,
     dominantDimensions: [dimA, dimB],
     profile: mainProfile,
-    subProfile: subProfile
+    subProfile: subProfile,
+    aiPath: getAiPath(mainProfile)
   };
 }
 
-module.exports = { computeProfile, computeRawScores, getTopTwoDimensions, resolveProfile };
+module.exports = { computeProfile, computeRawScores, getTopTwoDimensions, resolveProfile, getAiPath, AI_PATHS };
